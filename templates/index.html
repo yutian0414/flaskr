@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css_set.css">
+
+    <title>Footprint Map</title>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="row jumbtron">
+            <div id="header" class="col-md-12 col-xs-12">
+                <div class="col-md-6 col-xs-6">
+                    <h2>旅行地图<small>--旅行的印记</small></h2>
+                </div>
+                <div class="col-md-4 col-xs-4">
+                    <h3>让美留在记忆里。。。</h3>
+                </div>
+                <div calss="col-md-4 col-xs-4">
+                    {% if user %}
+                        <div class="col-md-1 col-xs-1"><h3>{{user}}</h3></div>
+                       <div class="col-md-1 col-xs-1" id="touxiang"><img src={{touxiang}} width="100%" height="100%" /></div>
+                    {% endif%}
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">My Footprint</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#"> 地图 </a></li>
+                        <li id="edit"><a href="#">编辑</a></li>
+                        <li id="add"><a href="#">新增</a></li>
+                        <li id="comment"><a href="#">评论</a></li>
+                        <li id="judge"><a href="#">点赞</a></li>
+                        <li></li>
+                        <li></li>
+                        <li id="sign_in"><a href="#">登录</a></li>
+                        <li id="sign_up"><a href="#">注册</a></li>
+                        <li id="sign_out"><a href="/sign_out">退出</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="jumbotron" id="sign_in_input" hidden>
+            <div class="container">
+                <form class="form-inline" role="form" action="/sign_in" method="POST" id="sign_in_form">
+                    <div hidden>
+                    </div>
+                      <div class="input-group">
+                          <span class="input-group-addon">用户名：</span>
+                          <input type="text" class="form-control" name="username_sign_in" placeholder="请输入用户名">
+                      </div>
+                      <div class="input-group">
+                          <span class="input-group-addon">密码：</span>
+                          <input type="password" class="form-control" name="password_sign_in" placeholder="请输入密码">
+                     </div>
+                </form>
+                <br>
+                <div class="btn-group btn-group col-md-5">
+                    <button type=“Submit" id="sign_in_ok" class="btn btn-default col-md-2" form="sign_in_form">确定</button>
+                    <span class="col-md-1"></span>
+                    <button type="Reset" id="sign_in_cancel" class="btn btn-default col-md-2" form="sign_in_form">取消</button>
+                </div>
+                <div id="ask_sign_up col-md-7">
+                    <br>
+                    <p>还没有帐号？赶快<a href="#">点击</a>这里吧</p>
+                </div>
+            </div>
+        </div>
+        <div class="jumbotron" id="sign_up_input" hidden>
+            <div class="container">
+                <form class="form-horizontal" role="form" action="/sign_up" method="POST" id="sign_up_form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">用户名：</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="username" placeholder="请输入用户名">
+                        </div>
+                        <label class="control-label col-md-2">密码：</label>
+                        <div class="col-md-4">
+                            <input type="password" class="form-control" name="password" placeholder="请输入密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">邮箱：</label>
+                        <div class="col-md-4">
+                            <input type="email" class="form-control" name="email" placeholder="请输入邮箱">
+                        </div>
+                        <label class="control-label col-md-2">生日：</label>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" name="birthday" placeholder="请输入生日">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">所在地：</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="address" placeholder="请输入地址">
+                        </div>
+                        <label class="control-label col-md-2">头像：</label>
+                        <div class="col-md-4">
+                            <input type="file" name="touxiang">
+                        </div>
+                    </div>
+                </form>
+                <div class="btn-group btn-group col-md-12">
+                    <span class="col-md-3"></span>
+                    <button type="Submit" class="btn btn-default col-md-2" form="sign_up_form">确定</button>
+                    <span class="col-md-1"></span>
+                    <button type="Reset" class="btn btn-default col-md-2" form="sign_up_form">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="add" id="add_image" hidden>
+            <div class="container">
+                <form class="form-horizontal" role="form" action="/add" method="POST" id="add_image_form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">照片名称:</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="image_name" placeholder="请输入图片名称">
+                        </div>
+                        <label class="control-label col-md-2">拍摄日期:</label>
+                        <div class="col-md-4">
+                            <input type="date" name="take_date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <label class="control-label col-md-2">经度：</label>
+                        <div class="col-md-4">
+                            <input type="text" name="longitude" class="form-control" required="required">
+                        </div>
+                        <label class="control-label col-md-2">维度：</label>
+                        <div class="col-md-4">
+                            <input type="text" name="altitude" class="form-control" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">图片评论：</label>
+                        <div class="col-md-4">
+                            <input type="text" name="image_comment" class="form-control">
+                        </div>
+                        <label class="control-label col-md-2">图片：</label>
+                        <div class="col-md-4">
+                            <input type="file" name="photo" required="required">
+                        </div>
+                    </div>
+                </form>
+                <div class="btn-group btn-group col-md-12">
+                    <span class="col-md-3"></span>
+                    <button type="Submit" class="btn btn-default col-md-2" form="add_image_form">确定</button>
+                    <span class="col-md-1"></span>
+                    <button type="Reset" class="btn btn-default col-md-2" form="add_image_form">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="mapbody">
+            <div class="col-md-12">
+                <div class="col-md-12 col-xs-12" id="mapid"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div id="footer">
+                <div class="col-md-6 col-xs-12">
+                    <p>Copy Right: Yutian</p>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <p> <time datetime="2017-04-16">Update date:2017-04-16</time></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var mymap=L.map('mapid',markerZoomAnimation=true).setView([30.3,120.2],10).locate();
+        osm=L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:17})
+        mymap.addLayer(osm);
+        var popup=L.popup();
+        function on_map_click(e){
+            popup
+                .setLatLng(e.latlng)
+                .setContent("点击位置："+e.latlng.toString())
+                .openOn(mymap);
+            var altitude=document.querySelector("[name='altitude']");
+            var longitude=document.querySelector("[name='longitude']");
+            altitude.value=e.latlng.lat;
+            longitude.value=e.latlng.lng;
+        }
+        mymap.on("click",on_map_click);
+        var images={{images|safe}}
+        function show_image(){
+            for (var i=0;i<images.length;i++){
+             var marker=L.marker(images[i].location,riseOnHover=true).addTo(mymap);
+             console.log(images[i].path)
+
+            marker.on({
+                'click':function(e){
+                    console.log(e)
+                }
+            })
+            marker.bindPopup("<div id="+ images[i].id +" class='show_area'><div class='image_area'><img  src="+images[i].path+
+            " height='100%'/><div class='judge_area'><div class='text_area'><p>"+
+            images[i].text+"</p></div><div class='good_judge'><p><a src='#' onclick='judge(this)'>赞</a><span class='good_count'>"+images[i].good_judge+
+            "</span></p></div><div class='bad_judge'><p><a src='#' onclick=judge(this)>倒</a><span class='bad_count'>"+images[i].bad_judge
+            +"</span></p></div></div></div></div>").openPopup().closePopup();
+               }
+        }
+        show_image()
+
+    </script>
+
+ <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="static/js_set.js"></script>
+</body>
+</html>

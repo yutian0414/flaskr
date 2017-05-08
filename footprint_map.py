@@ -1,0 +1,212 @@
+from flask import Flask, request,g,redirect,jsonify,url_for
+from flask import session as se
+from flask import render_template
+from database import session_scope
+from form import userform
+from models import User,Image,Good_Judge,Bad_Judge
+from datetime import datetime
+from werkzeug import secure_filename
+import os
+from sqlalchemy import  and_
+from datetime import timedelta
+
+import json
+
+app=Flask(__name__)
+app.secret_key="my frist flask app"
+app.permanent_session_lifetime=timedelta(days=1)
+@app.route('/',methods=['GET','POST'])
+def homepage():
+    form=userform(request.form)
+    username=se.get("username", None)
+    if username:
+        with session_scope() as session:
+            try:
+                touxiang=session.query(User).filter(User.username==username).first().touxiang
+                touxiang="static"+touxiang.split('static')[-1]
+                user=session.query(User).filter(User.username==username).first()
+                print(user)
+                print(user.images.all())
+            except:
+                touxiang=""
+            imgs = []
+            try:
+                for img in user.images:
+                    imgs.append(imagetodict(img))
+            except Exception as e:
+                print(e)
+                imgs=[]
+        return render_template("index.html",user=username,touxiang=touxiang,images=imgs) #返回用户化的页面
+    else:
+        #返回通用界面
+        return render_template("index.html",form=form)
+
+@app.route("/sign_in",methods=["POST"])
+def sign_in():
+    print(request.form)
+    form_username=request.form.get("username_sign_in",None)
+    form_password=request.form.get("password_sign_in",None)
+    if  form_username and form_password:
+        try:
+            with session_scope() as session:
+                password = session.query(User).filter(User.username==form_username).first().password
+            if password == form_password:
+                se["username"]=form_username     #将用户名写入道session中
+                return redirect("/")
+            else:
+                return u"用户名或密码错误"
+        except Exception as e:
+            print(e)
+            return u"用户名或密码错误"
+    else:
+        return u"输入错误"
+@app.route("/sign_up",methods=["POST"])
+def sign_up():
+
+    form_username=request.form.get("username",None)
+    form_password = request.form.get("password", None)
+    form_email = request.form.get("email", None)
+    form_address = request.form.get("address", None)
+    form_birthday = request.form.get("birthday", None)
+    #将日期字符串转化维日期
+    if form_birthday:
+        form_birthday = datetime.strptime(form_birthday,"%Y-%m-%d").date()
+        print(type(form_birthday))
+
+    #头像文件存储
+    file=request.files["touxiang"]
+    if file:
+        filename=secure_filename(file.filename)
+        filepath=os.path.join(os.path.dirname(__file__), "static/upload/touxiang",filename)
+        file.save(filepath)
+        form_touxiang = filepath
+    else:
+        form_touxiang=None
+    print(form_username,form_password,form_email,form_address,form_birthday,form_touxiang,type(form_birthday))
+    if form_username and form_password and form_email:
+        try:
+            user = User(username=form_username, password=form_password, \
+                    email=form_email, address=form_address, birthday=form_birthday,touxiang=form_touxiang) #注册用户
+            print(user)
+            with session_scope() as session:
+                session.add(user)
+            se["username"]=form_username
+            return redirect("/")
+        except Exception as e:
+            print(e)
+            return u"数据库保存信息失败"
+    else:
+        return u'存在数据不符合规范'
+
+@app.route("/sign_out",methods=["GET"])
+def sign_out():
+    try:
+        del se["username"]
+    except:
+        pass
+
+    return redirect("/")
+
+@app.route("/comment",methods=["GET","POST"])
+def comment():
+    pass
+
+@app.route("/add",methods=["GET","POST"])
+def add():
+    if se.get("username",None)!=None:
+        if request.method=="POST":
+            name=request.form.get("image_name",None)
+            date=request.form.get("take_date",None)
+            altitude=request.form.get("altitude",None)
+            longitude=request.form.get("longitude",None)
+            text=request.form.get("image_comment",None)
+            file=request.files["photo"]
+        if date:
+            date = datetime.strptime(date,"%Y-%m-%d").date()
+            print(type(date))
+
+    #照片存储
+        username=se["username"]
+        if file:
+            filename=secure_filename(file.filename)
+            filepath=os.path.join(os.path.dirname(__file__),"static/upload/image/",username)
+            if not os.path.exists(filepath):
+                os.mkdir(filepath)
+            filepath=os.path.join(filepath,filename)
+            file.save(filepath)
+            path = filepath
+            if not name:
+                name=filename.split(".")[0]
+            # 保存进数据库
+            try:
+                with session_scope() as session:
+                    user_id=session.query(User).filter_by(username=username).first().username
+                    print(user_id,type(user_id))
+                    print(user_id)
+                    image = Image(name=name, date=date, altitude=altitude, longitude=longitude, text=text,
+                                  path=path,user_id=user_id)  # 注册用户
+                    print(image)
+                    session.add(image)
+                    return redirect("/")  #返回首页，显示照片
+            except Exception as e:
+                print(e)
+                return "数据库保存信息失败"
+        else:
+            #需要重新到增加界面
+            return redirect("/")
+    else:
+        #用户没有登录
+        return "用户请先登录"
+
+def imagetodict(img):
+    try:
+        good_judge_count=len( img.good_judge.all())
+    except:
+        good_judge_count=0
+    try:
+        bad_judge_count=len( img.good_judge.all())
+    except:
+        bad_judge_count=0
+    return {
+            'id':img.id,
+            "name": img.name,
+            'date': datetime.strftime(img.date,"%Y-%m-%d"),
+            'location': [img.altitude,img.longitude],
+            'path': "static"+img.path.split("static")[-1],
+            'text': img.text,
+            'user_id': img.user_id,
+            'good_judge':good_judge_count,
+            'bad_judge':bad_judge_count,
+    }
+@app.route('/judge',methods=["post"])
+def judge():
+    date=datetime.now()
+    username=se.get("username",None)
+    if username!=None:
+        judge=request.form.get("judge",None)
+        image_id=request.form.get("image",None)
+        if image_id:
+            with session_scope() as session:
+                image = session.query( Image ).filter( Image.id == image_id ).first().name
+                username=session.query(User).filter(User.username==username).first().username
+                judge_1=session.query(Good_Judge).filter(and_(Good_Judge.image==image, Good_Judge.username==username)).first()
+                judge_2=session.query(Bad_Judge).filter(and_(Bad_Judge.image==image, Good_Judge.username==username)).first()
+                if judge_1 or judge_2 :
+                    return jsonify(judge="exist")
+                else:
+                    if judge=="good":
+                        judge_obj=Good_Judge(image=image,username=username,date=date)
+                    elif judge=="bad":
+                        judge_obj=Bad_Judge(image=image,username=username,date=date)
+                    else:
+                        return "未传入正确评价数据"
+                print(judge_obj)
+                session.add( judge_obj )
+                return jsonify( judge=judge )
+        else:
+            return "未传入照片id"
+    else:
+        return "请先登录, 再评论！谢谢！"
+
+if __name__=="__main__":
+    app.run(host="127.0.0.1",port=8027,debug=True)

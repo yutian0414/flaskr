@@ -1,0 +1,65 @@
+
+ #header{
+ 	background-color:rgb(123,54,89);
+ 	color: white;
+ 	border-style: solid;
+ 	border-width: 5px;
+
+ }
+ #mapid{
+    height:800px;
+    margin: auto;
+    padding: 0px;
+
+}
+nav{
+	margin: 0px;
+	padding-bottom: 0px;
+}
+#footer{
+	text-align: center;
+	background-color:rgb(100,100,100);
+	font-style: bold;
+}
+#sign_in_input, #sign_up_input, #add_image{
+	display:none;
+
+}
+
+.show_area{
+
+	height: 20em;
+	width: 25em;
+}
+.image_area{
+	height:  80%;
+	width:  100%;
+}
+.judge_area{
+	height: 30%;
+	width:100%;
+}
+.text_area{
+	float: left;
+	height: 100%;
+	width: 70%;
+}
+.good_judge, .bad_judge{
+	float: left;
+	height: 100%;
+	width: 15%;
+	text-align: center;
+}
+#touxiang{
+	margin: 10px auto;
+}
+#touxiang img{
+	border-radius: 50%;
+}
+
+.large_image{
+	height: 300%;
+	position: relative;
+	top: -100px;
+	right: -100px;
+}
