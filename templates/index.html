@@ -32,7 +32,7 @@
                 </div>
                 <div calss="col-md-4 col-xs-4">
                     {% if user %}
-                        <div class="col-md-1 col-xs-1"><h3>{{user}}</h3></div>
+                        <div class="col-md-1 col-xs-1" id="username"><h3>{{user}}</h3></div>
                        <div class="col-md-1 col-xs-1" id="touxiang"><img src={{touxiang}} width="100%" height="100%" /></div>
                     {% endif%}
                 </div>
@@ -49,7 +49,6 @@
                         <li id="edit"><a href="#">编辑</a></li>
                         <li id="add"><a href="#">新增</a></li>
                         <li id="comment"><a href="#">评论</a></li>
-                        <li id="judge"><a href="#">点赞</a></li>
                         <li></li>
                         <li></li>
                         <li id="sign_in"><a href="#">登录</a></li>
@@ -210,22 +209,21 @@
         var images={{images|safe}}
         function show_image(){
             for (var i=0;i<images.length;i++){
-             var marker=L.marker(images[i].location,riseOnHover=true).addTo(mymap);
-             console.log(images[i].path)
-
-            marker.on({
-                'click':function(e){
-                    console.log(e)
-                }
-            })
-            marker.bindPopup("<div id="+ images[i].id +" class='show_area'><div class='image_area'><img  src="+images[i].path+
-            " height='100%'/><div class='judge_area'><div class='text_area'><p>"+
-            images[i].text+"</p></div><div class='good_judge'><p><a src='#' onclick='judge(this)'>赞</a><span class='good_count'>"+images[i].good_judge+
-            "</span></p></div><div class='bad_judge'><p><a src='#' onclick=judge(this)>倒</a><span class='bad_count'>"+images[i].bad_judge
-            +"</span></p></div></div></div></div>").openPopup().closePopup();
-               }
+                var marker=L.marker(images[i].location,riseOnHover=true).addTo(mymap);
+                console.log(images[i].path)
+                marker.on({
+                    'click':function(e){
+                        console.log(e)
+                    }
+                })
+                marker.bindPopup("<div id="+ images[i].id +" class='show_area'><div class='image_area'><img ondblclick=large_image(this) src="+images[i].path+
+                " height='100%'/><div class='judge_area'><div class='text_area'><p>"+images[i].text+
+                "</p></div><div class='good_judge'><p><a src='#' onclick='judge(this)'>赞</a><span class='good_count'>"+images[i].good_judge+
+                "</span></p></div><div class='bad_judge'><p><a src='#' onclick=judge(this)>倒</a><span class='bad_count'>"+images[i].bad_judge+
+                "</span></p></div></div></div></div>").openPopup().closePopup();
+             }
         }
-        show_image()
+       show_image()
 
     </script>
 

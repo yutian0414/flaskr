@@ -47,8 +47,27 @@ function judge(id){
 	}
 	)
 }
-$(".image_area").dblclick(function(){
+
+
+function large_image(id){
+	var id=$(id);
+	if (id.parent().attr("id")=="mapbody"){
+		$(".image_area").prepend(id)
+	}else{
+		$("#mapbody").prepend(id)
+	}
+	id.toggleClass("large_image")
 	alert("123")
-	$(".image_area").toggleClass("large_image")
+
+}
+
+$(document).ready(function show_sign_in_out_up(){
+	        console.log($("#username").text())
+	        if ($("#username").text().length!=0){
+		        $("#sign_in").css("display","none")
+		        $("#sign_up").css("display","none")
+		        $("#sign_out").css("display","block")
+	        }else{
+	        }
 
 })

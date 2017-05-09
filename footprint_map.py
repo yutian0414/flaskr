@@ -9,7 +9,7 @@ from werkzeug import secure_filename
 import os
 from sqlalchemy import  and_
 from datetime import timedelta
-
+from PIL import Image
 import json
 
 app=Flask(__name__)
@@ -78,8 +78,11 @@ def sign_up():
     if file:
         filename=secure_filename(file.filename)
         filepath=os.path.join(os.path.dirname(__file__), "static/upload/touxiang",filename)
-        file.save(filepath)
-        form_touxiang = filepath
+        flag = image_reshape_circle( file, filepath )
+        if flag:
+            form_touxiang = filepath
+        else:
+            form_touxiang=''
     else:
         form_touxiang=None
     print(form_username,form_password,form_email,form_address,form_birthday,form_touxiang,type(form_birthday))
@@ -208,5 +211,26 @@ def judge():
     else:
         return "请先登录, 再评论！谢谢！"
 
+
+def image_reshape_circle(image,image_save_path):
+        size=(500,500)
+        try:
+            im=Image.open(image)
+            x,y=im.size
+            if x>y:
+                x,y=y,x
+            box=(int(y/2-x/2),0,int(y/2+x/2),x)
+            print(int(y/2-x/2),0,int(y/2+x/2),x)
+            region=im.crop(box)
+            im_new=Image.new('RGB',(x,x),(255,255,255))
+            im_new.paste(region,box)
+            im_new.show()
+            im_new.save(image_save_path)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+
 if __name__=="__main__":
-    app.run(host="127.0.0.1",port=8027,debug=True)
+    app.run(host="127.0.0.1",port=8029,debug=True)
