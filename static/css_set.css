@@ -8,7 +8,7 @@
  }
  #mapid{
  	float:left;
-    height:800px;
+    height:700px;
     margin: auto;
     padding: 0px;
 
@@ -22,7 +22,7 @@ nav{
 	background-color:rgb(100,100,100);
 	font-style: bold;
 }
-#sign_in_input, #sign_up_input, #add_image,#sign_out{
+#change_password_area, #sign_in_input, #sign_up_input, #add_image,#sign_out{
 	display:none;
 }
 
@@ -55,12 +55,19 @@ nav{
 	margin: 10px auto;
 }
 #touxiang img{
-	border-radius: 80%;
+/*	border-radius: 80%;*/
 }
 
-.large_image{
-	position: absolute;
-	height: 100%
-	top: 10%;
-	left: 20%;
+/*.large_image{
+	position: fixed;
+	left: 0px;
+	right: 0px;
+	margin-top: -800px;
+	margin-left: 200px;
+}
+*/
+
+#username_button{
+	text-align: right;
+	margin: auto;
 }

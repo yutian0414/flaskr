@@ -2,15 +2,25 @@
 $("#sign_in").click(function(){
 	$("#sign_up_input").css("display",'none')
 	$("#add_image").css("display","none")
+	$("#change_password_area").css("display","none")
 	$("#sign_in_input").css("display",'block');
 })
 $("#sign_up").click(function(){
+	$("#change_password_area").css("display","none")
 	$("#sign_in_input").css("display",'none')
 	$("#add_image").css("display","none")
-	$("#sign_up_input").css("display",'block');
+	$("#sign_up_input").css("display",'block')
 })
+$("#redict_sign_up").click(function(){
+	$("#change_password_area").css("display","none")
+	$("#sign_in_input").css("display",'none')
+	$("#add_image").css("display","none")
+	$("#sign_up_input").css("display",'block')
+})
+
 $("#add").click(function(){
 	$("#add_image").css("display","block")
+	$("#change_password_area").css("display","none")
 	$("#sign_up_input").css("display",'none')
 	$("#sign_in_input").css("display",'none');
 })
@@ -48,26 +58,40 @@ function judge(id){
 	)
 }
 
-
-function large_image(id){
-	var id=$(id);
-	if (id.parent().attr("id")=="mapbody"){
-		$(".image_area").prepend(id)
+//control when the sign_up,sign_in,sign_out button should show on the page.
+$("document").ready(function(){
+	if ($("#username").length>0){
+		$("#sign_up").css("display","none")
+		$("#sign_in").css("display","none")
+		$("#sign_out").css("display","block")
 	}else{
-		$("#mapbody").prepend(id)
+		
 	}
-	id.toggleClass("large_image")
-	alert("123")
+})
 
-}
+//user information feedback to the form.
+$("#edit_info").click(function(){
+	$("#change_password_area").css("display","none")
+	$("#sign_up_input").css("display",'none')
+	$("#add_image").css("display","none")
+	$("#sign_up_input").css("display","block")
+	$("#sign_up_form>input[type=radio]").val("modify")
 
-$(document).ready(function show_sign_in_out_up(){
-	        console.log($("#username").text())
-	        if ($("#username").text().length!=0){
-		        $("#sign_in").css("display","none")
-		        $("#sign_up").css("display","none")
-		        $("#sign_out").css("display","block")
-	        }else{
-	        }
+	$.get("/get_user_info",function(res){	
 
+		$("#username_sign_up").val(res.username)
+		$("#email_sign_up").val(res.email)
+		$("#birthday_sign_up").val(res.birthday)
+		$("#address_sign_up").val(res.address)
+	}
+	)
+})
+
+
+// show change_password_area, hid other area
+$("#change_password_click").click(function(){
+	$("#change_password_area").css("display","block")
+	$("#sign_up_input").css("display",'none')
+	$("#add_image").css("display","none")
+	$("#sign_in_input").css("display",'none')
 })

@@ -24,15 +24,28 @@
     <div class="container" id="container">
         <div class="row jumbtron">
             <div id="header" class="col-md-12 col-xs-12">
-                <div class="col-md-6 col-xs-6">
+                <div class="col-md-5 col-xs-6">
                     <h2>旅行地图<small>--旅行的印记</small></h2>
                 </div>
                 <div class="col-md-4 col-xs-4">
                     <h3>让美留在记忆里。。。</h3>
                 </div>
-                <div calss="col-md-4 col-xs-4">
+                <div calss="col-md-3 col-xs-4">
                     {% if user %}
-                        <div class="col-md-1 col-xs-1" id="username"><h3>{{user}}</h3></div>
+                        <div class="col-md-2 col-xs-1" id="username">
+                        	<div class="btn-group dropdown" id="username_button">
+                        		<span>
+                        		<button type="button" class="btn btn-link dropdown-toggle btn-sm" data-toggle="dropdown"><h3>{{ user }}</h3>
+                        			<span class="caret"></span>
+                        		</button>
+                        	<ul class="dropdown-menu" role="menu">
+                        		<li><a href="#" id="change_password_click">更改密码</a></li>
+                        		<li><a href="#" id="edit_info">编辑信息</a></li>
+                        		<li><a href="/sign_out" >退出</a></li>
+                        	</ul>
+                        	</span>
+                        	</div>
+                        </div>
                        <div class="col-md-1 col-xs-1" id="touxiang"><img src={{touxiang}} width="100%" height="100%" /></div>
                     {% endif%}
                 </div>
@@ -74,43 +87,45 @@
                 </form>
                 <br>
                 <div class="btn-group btn-group col-md-5">
-                    <button type=“Submit" id="sign_in_ok" class="btn btn-default col-md-2" form="sign_in_form">确定</button>
+                    <button type="Submit" id="sign_in_ok" class="btn btn-default col-md-2" form="sign_in_form">确定</button>
                     <span class="col-md-1"></span>
                     <button type="Reset" id="sign_in_cancel" class="btn btn-default col-md-2" form="sign_in_form">取消</button>
                 </div>
                 <div id="ask_sign_up col-md-7">
                     <br>
-                    <p>还没有帐号？赶快<a href="#">点击</a>这里吧</p>
+                    <p>还没有帐号？赶快<a href="#" id="redict_sign_up">点击</a>这里吧</p>
                 </div>
             </div>
         </div>
         <div class="jumbotron" id="sign_up_input" hidden>
             <div class="container">
                 <form class="form-horizontal" role="form" action="/sign_up" method="POST" id="sign_up_form" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label class="control-label col-md-2">用户名：</label>
+                    <input type='radio' id='modify_flag' name='modify_flag' value='original' checked hidden>
+                    <div class="form-group" id="username-password">
+                        <label class="control-label col-md-2" >用户名：</label>
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="username" placeholder="请输入用户名">
+                            <input type="text" class="form-control" name="username" id="username_sign_up" placeholder="请输入用户名" required>
                         </div>
                         <label class="control-label col-md-2">密码：</label>
                         <div class="col-md-4">
-                            <input type="password" class="form-control" name="password" placeholder="请输入密码">
+                            <input type="password" class="form-control" name="password" id="password_sign_up" placeholder="请输入密码" required>
                         </div>
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group" id="email_birthday">
                         <label class="control-label col-md-2">邮箱：</label>
                         <div class="col-md-4">
-                            <input type="email" class="form-control" name="email" placeholder="请输入邮箱">
+                            <input type="email" class="form-control" name="email" id="email_sign_up" placeholder="请输入邮箱">
                         </div>
                         <label class="control-label col-md-2">生日：</label>
                         <div class="col-md-4">
-                            <input type="date" class="form-control" name="birthday" placeholder="请输入生日">
+                            <input type="date" class="form-control" name="birthday" id="birthday_sign_up" placeholder="请输入生日">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="address_touxiang">
                         <label class="control-label col-md-2">所在地：</label>
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="address" placeholder="请输入地址">
+                            <input type="text" class="form-control" name="address" id="address_sign_up" placeholder="请输入地址">
                         </div>
                         <label class="control-label col-md-2">头像：</label>
                         <div class="col-md-4">
@@ -126,7 +141,24 @@
                 </div>
             </div>
         </div>
-
+        <div id="change_password_area" hidden>
+            <div class="container">
+                <form class="form-horizontal" role="form" action="/change_password" method="POST" id="change_password_form" enctype="multipart/form-data">
+                    <div class="form-group" id="password_change">
+                    	<label class="control-label col-md-2">原密码：</label>
+                    	<div class="col-md-4"><input type="password" class="form-control" name="password_change_old" placeholder="请输入原密码" required></div>
+                        <label class="control-label col-md-2">新密码：</label>
+                    	<div class="col-md-4"><input type="password" class="form-control" name="password_change_new" placeholder="请输入新密码" required></div>
+                    </div>
+                    <div class="btn-group btn-group col-md-12">
+                        <span class="col-md-3"></span>
+                        <button type="Sumbit" class="btn btn-default col-md-2" >确定</button>
+                        <span class="col-md-1"></span>
+                        <button type="Reset" class="btn btn-default col-md-2">取消</button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <div class="add" id="add_image" hidden>
             <div class="container">
                 <form class="form-horizontal" role="form" action="/add" method="POST" id="add_image_form" enctype="multipart/form-data">
@@ -178,11 +210,14 @@
         </div>
         <div class="row">
             <div id="footer">
-                <div class="col-md-6 col-xs-12">
+                <div class="col-md-4 col-xs-12">
                     <p>Copy Right: Yutian</p>
                 </div>
-                <div class="col-md-6 col-xs-12">
+                <div class="col-md-4 col-xs-12">
                     <p> <time datetime="2017-04-16">Update date:2017-04-16</time></p>
+                </div>
+                <div class="col-md-4 col-xs-12">
+                    <p>Email:<button type="button" class="btn btn-link">yutian0414@126.com</button></a></p>
                 </div>
 
             </div>
@@ -191,7 +226,7 @@
 
 
     <script>
-        var mymap=L.map('mapid',markerZoomAnimation=true).setView([30.3,120.2],10).locate();
+        var mymap=L.map('mapid',markerZoomAnimation=true).setView([30.3,120.2],12).locate();
         osm=L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:17})
         mymap.addLayer(osm);
         var popup=L.popup();
