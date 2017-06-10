@@ -6,12 +6,17 @@
  	border-width: 5px;
 
  }
- #mapid{
- 	float:left;
+ #mapbody{
     height:700px;
     margin: auto;
     padding: 0px;
 
+}
+#mapid{
+	float: left;
+	height: 100%;
+	margin: auto;
+	padding:0px;
 }
 nav{
 	margin: 0px;
@@ -26,13 +31,13 @@ nav{
 	display:none;
 }
 
-
 .show_area{
-
-	height: 20em;
-	width: 25em;
+	height: 100%;
+	width: 100%;
 }
 .image_area{
+	min-width: 25em;
+	min-height: 20em;
 	height:  80%;
 	width:  100%;
 }
@@ -70,4 +75,8 @@ nav{
 #username_button{
 	text-align: right;
 	margin: auto;
+}
+#large_image img{
+	width: 100%;
+
 }

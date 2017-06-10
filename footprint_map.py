@@ -144,7 +144,8 @@ def comment():
 
 @app.route("/add",methods=["GET","POST"])
 def add():
-    if se.get("username",None)!=None:
+    username = se.get("username",None)
+    if username!=None:
         if request.method=="POST":
             name=request.form.get("image_name",None)
             date=request.form.get("take_date",None)
@@ -152,12 +153,12 @@ def add():
             longitude=request.form.get("longitude",None)
             text=request.form.get("image_comment",None)
             file=request.files["photo"]
+            image_id=request.form.get("image_id_hidden",None)
+            print(image_id)
         if date:
             date = datetime.strptime(date,"%Y-%m-%d").date()
             print(type(date))
-
     #照片存储
-        username=se["username"]
         if file:
             filename=secure_filename(file.filename)
             filepath=os.path.join(os.path.dirname(__file__),"static/upload/image/",username)
@@ -166,24 +167,39 @@ def add():
             filepath=os.path.join(filepath,filename)
             file.save(filepath)
             path = filepath
-            if not name:
-                name=filename.split(".")[0]
+        else:
+            path=None
+        if not name:
+            name=filename.split(".")[0]
             # 保存进数据库
-            try:
-                with session_scope() as session:
+        try:
+            with session_scope() as session:
+                if image_id==None:
                     user_id=session.query(User).filter_by(username=username).first().username
                     print(user_id,type(user_id))
                     print(user_id)
-                    image = Image(name=name, date=date, altitude=altitude, longitude=longitude, text=text, path=path, user_id=user_id)  # 注册用户
+                    image = Image(name=name, date=date, altitude=altitude, longitude=longitude, text=text, path=path, user_id=user_id)  # 注册照片
                     print(image)
                     session.add(image)
-                    return redirect("/")  #返回首页，显示照片
-            except Exception as e:
-                print(e)
-                return "数据库保存信息失败"
-        else:
-            #需要重新到增加界面
-            return redirect("/")
+                else:
+                    image=session.query(Image).filter_by(id=image_id).first()
+                    if image.user_id==username:
+                        image.name=name
+                        image.date=date
+                        image.altitude=altitude
+                        image.longitude=longitude
+                        image.text=text
+                        if path:
+                            image.path=path
+                        else:
+                            pass
+                        print("success")
+                    else:
+                        return '你没有权限更改此图片信息！'
+            return redirect("/")  #返回首页，显示照片
+        except Exception as e:
+            print(e)
+            return "数据库保存信息失败"
     else:
         #用户没有登录
         return "用户请先登录"
@@ -270,9 +286,33 @@ def change_password():
             return redirect("/")
         else:
             return "原密码输入错误，请重新输入"
+@app.route('/edit_img',methods=['POST',])
+def edit_img():
+    username=se["username"]
+    if username:
+        id=request.values.get("id")
+        with session_scope() as session:
+            image=session.query(Image).filter(Image.id==id).first()
 
+            user=image.user_id
+        image_dict=image_to_dict(image)
+        print( image_dict)
+        if user==username:
+            return jsonify(image_dict)
+        else:
+            return "你没有权限进行修改！"
+    else:
+        return "请先登录！"
 
-
+def image_to_dict(image):
+    if image:
+        return {
+            "name":image.name,
+            "altitude":image.altitude,
+            "longitude":image.longitude,
+            "text":image.text,
+            "date":(image.date).strftime("%Y-%m-%d"),
+        }
 def user_to_dict(user):
     if user:
         return {
@@ -310,4 +350,4 @@ def image_reshape_circle(image,image_save_path):
 
 
 if __name__=="__main__":
-    app.run(host="127.0.0.1",port=8020,debug=True)
+    app.run(host="127.0.0.1",port=8028,debug=True)

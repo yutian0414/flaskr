@@ -1,7 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session,sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-engine=create_engine("sqlite:////home/jerry/flaskr/data.db",convert_unicode=True)
+import os
+file_path=os.path.dirname(os.path.abspath(__file__))
+if file_path[0]=='\\':
+    db_path = r'sqlite://' + file_path + r'/data.db'
+else:
+    db_path=r'sqlite:///' + file_path + r'/data.db'
+print(db_path)
+engine=create_engine(db_path,convert_unicode=True)
 db_session=scoped_session(sessionmaker(autocommit=False,
                                        autoflush=False,
                                        expire_on_commit=False,

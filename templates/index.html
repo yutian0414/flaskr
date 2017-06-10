@@ -190,7 +190,7 @@
                         </div>
                         <label class="control-label col-md-2">图片：</label>
                         <div class="col-md-4">
-                            <input type="file" name="photo" required="required">
+                            <input type="file" name="photo">
                         </div>
                     </div>
                 </form>
@@ -204,9 +204,8 @@
         </div>
 
         <div class="row" id="mapbody">
-            <div class="col-md-12">
                 <div class="col-md-12 col-xs-12" id="mapid"></div>
-            </div>
+                <div class="col-md-12 col-xs-12" id="large_image" hidden><img src="#"></div>
         </div>
         <div class="row">
             <div id="footer">
@@ -252,7 +251,7 @@
                     }
                 })
                 marker.bindPopup("<div id="+ images[i].id +" class='show_area'><div class='image_area'><img ondblclick=large_image(this) src="+images[i].path+
-                " height='100%'/><div class='judge_area'><div class='text_area'><p>"+images[i].text+
+                " width=100% /><div class='judge_area'><div class='text_area'><p>"+images[i].text+
                 "</p></div><div class='good_judge'><p><a src='#' onclick='judge(this)'>赞</a><span class='good_count'>"+images[i].good_judge+
                 "</span></p></div><div class='bad_judge'><p><a src='#' onclick=judge(this)>倒</a><span class='bad_count'>"+images[i].bad_judge+
                 "</span></p></div></div></div></div>").openPopup().closePopup();
