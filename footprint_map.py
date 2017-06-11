@@ -1,6 +1,7 @@
 from flask import Flask, request,g,redirect,jsonify,url_for
 from flask import session as se
 from flask import render_template
+from flask import flash
 from database import session_scope
 from models import User,Good_Judge,Bad_Judge
 from models import Image
@@ -350,4 +351,4 @@ def image_reshape_circle(image,image_save_path):
 
 
 if __name__=="__main__":
-    app.run(host="127.0.0.1",port=8028,debug=True)
+    app.run(host="127.0.0.1",port=8031,debug=True)
